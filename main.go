@@ -27,6 +27,7 @@ func whiteList(syscalls []string) {
 
 func main() {
 
+    /*
 	var syscalls = []string{"write", "rt_sigaction", "mmap", "clock_gettime", "clone",
 		"mprotect", "futex", "openat", "access", "rt_sigprocmask", "fstat", "seccomp",
 		"munmap", "wait4", "close", "read", "brk", "set_tid_address", "sigaltstack",
@@ -36,12 +37,31 @@ func main() {
 		"lseek", "getgroups", "getgid", "geteuid", "getegid", "getuid", "exit", "fcntl"}
 
 	whiteList(syscalls)
+    fmt.Sprintf("%x",syscalls)
+    */
+    var prog string
+    var args []string
 
-	cmd := exec.Command("/usr/bin/id")
+    if len(os.Args) == 1 {
+        fmt.Println("Need at least 1 argument")
+        os.Exit(1)
+    }
+
+    prog = os.Args[1]
+
+    if len(os.Args) > 2 {
+        args = os.Args[2:]
+    }
+
+    cmd := exec.Command(prog,args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{
-	//Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS,
-	//Unshareflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS,
-	}
+	     Cloneflags: syscall.CLONE_NEWUSER, //syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS,
+	     //Unshareflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS,
+         UidMappings : []syscall.SysProcIDMap{
+            {ContainerID: 65534, HostID: 0, Size: 1},
+         },
+    }
+
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
