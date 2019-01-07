@@ -1,0 +1,12 @@
+read
+open
+close
+fstat
+mmap
+mprotect
+munmap
+brk
+access
+nanosleep
+execve
+arch_prctl
