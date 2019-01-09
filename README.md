@@ -47,7 +47,12 @@ Save the output into a file and supply this when calling the child process. This
 ./sandkasteel -seccomp sample_id_syscalls.txt /usr/bin/id
 uid=65534(nobody) gid=65534(nogroup) groups=65534(nogroup)
 ``` 
+If you don't have permission to, or don't want to, run in a new usernamespace (or new UID/GID), supply the `-nons` flag:
 
+```
+./sandkasteel -nons -seccomp sample_id_seccomp.txt /usr/bin/id
+uid=1000(staaldraad) gid=1000(staaldraad) groups=1000(staaldraad)
+```
 
 # Credits
 The syscall tracing code was taken from [https://github.com/lizrice/strace-from-scratch](https://github.com/lizrice/strace-from-scratch)
