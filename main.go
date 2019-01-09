@@ -97,6 +97,7 @@ func readLines(path string) ([]string, error) {
 func main() {
 
 	tracePtr := flag.Bool("trace", false, "Trace and print child process syscalls")
+	noUserNSPtr := flag.Bool("nons", false, "Don't run as a different user / new user NS")
 	seccompFilePtr := flag.String("seccomp", "", "File with list of syscalls to whitelist for child proccess")
 	flag.Parse()
 
@@ -178,10 +179,12 @@ func main() {
 	}
 
 	if !*tracePtr {
-		cmd.SysProcAttr.Cloneflags = syscall.CLONE_NEWUSER
-		cmd.SysProcAttr.UidMappings = []syscall.SysProcIDMap{
-			{ContainerID: 65534, HostID: 65534, Size: 1},
-		}
+        if !*noUserNSPtr {
+            cmd.SysProcAttr.Cloneflags = syscall.CLONE_NEWUSER
+            cmd.SysProcAttr.UidMappings = []syscall.SysProcIDMap{
+                    {ContainerID: 65534, HostID: 65534, Size: 1},
+            }
+        }
 	} else {
 		//ss = ss.init()
 		cmd.SysProcAttr.Ptrace = true
